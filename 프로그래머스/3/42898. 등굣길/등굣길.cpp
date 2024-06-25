@@ -19,9 +19,7 @@ int solution(int m, int n, vector<vector<int>> puddles) {
                 continue;
             }
             else{
-                v[i][j] += v[i - 1][j];
-                v[i][j] += v[i][j - 1];
-                v[i][j] %= mod;
+                v[i][j]+=(v[i][j-1]+v[i-1][j])%mod;
             }
         }
     }
