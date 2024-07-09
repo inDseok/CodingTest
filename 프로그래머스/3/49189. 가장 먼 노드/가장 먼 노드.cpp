@@ -4,9 +4,6 @@
 #include <queue>
 #include <iostream>
 using namespace std;
-int arr[20001][20001]={0};
-int visited[20001];
-int dist[20001];
 int max_dist=0;
 int solution(int n, vector<vector<int>> edge) {
     vector<vector<int>> graph(n + 1);
