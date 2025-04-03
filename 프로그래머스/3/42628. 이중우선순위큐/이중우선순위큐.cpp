@@ -1,7 +1,9 @@
 #include <string>
 #include <vector>
 #include <queue>
+#include <deque>
 #include <algorithm>
+#include <iostream>
 using namespace std;
 
 vector<int> solution(vector<string> operations) {
@@ -9,18 +11,23 @@ vector<int> solution(vector<string> operations) {
     deque<int> dq;
     for(int i=0;i<operations.size();i++){
         if(operations[i][0]=='I'){
-            string temp="";
+            string s="";
             for(int j=2;j<operations[i].size();j++){
-                temp+=operations[i][j];
+                s+=operations[i][j];
             }
-            dq.push_back(stoi(temp));
+            dq.push_back(stoi(s));
             sort(dq.begin(),dq.end());
         }
-        else if(operations[i][0]=='D'&&!dq.empty()){
-            if(operations[i][2]=='1')
+        else if(operations[i][0]=='D'){
+            if(dq.empty())
+                continue;
+            
+            if(operations[i][2]=='1'){
                 dq.pop_back();
-            else 
+            }
+            else{
                 dq.pop_front();
+            }
         }
     }
     if(dq.empty()){
