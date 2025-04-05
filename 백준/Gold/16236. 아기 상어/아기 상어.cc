@@ -1,59 +1,59 @@
-#include <iostream>
-#include <queue>
-#include <algorithm>
-#include <cstring>
-#include <vector>
+#include<iostream>
+#include<vector>
+#include<queue>
+#include<cstring>
+#include<algorithm>
 using namespace std;
-int n;
+int dx[4] = { -1,0,1,0 };
+int dy[4] = { 0,-1,0,1 };
 int arr[21][21];
 int visited[21][21];
-pair<int, int> baby;
-int dy[4] = { 0,-1,0,1 };
-int dx[4] = {-1,0,1,0};
-int x, y, babysize = 2, eat = 0;
-int result = 0;
+int starty, startx;
+int babysize = 2;
+int eat = 0, result=0;
 int main() {
+	int n;
 	cin >> n;
-	for (int i = 1; i <= n; i++) {
-		for (int j = 1; j <= n; j++) {
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < n; j++) {
 			cin >> arr[i][j];
 			if (arr[i][j] == 9) {
-				y = i;
-				x = j;
 				arr[i][j] = 0;
+				starty = i;
+				startx = j;
 			}
 		}
 	}
 	while (1) {
-		memset(visited, -1, sizeof(visited));
-		visited[y][x] = 0;
 		queue<pair<int, int>> q;
+		q.push({ starty,startx });
+		memset(visited, -1, sizeof(visited));
+		visited[starty][startx] = 0;
 		vector<pair<int, int>> fish;
 		if (eat >= babysize) {
 			eat -= babysize;
 			babysize++;
 		}
-		q.push({ y,x });
 		while (!q.empty()) {
 			auto cur = q.front();
 			q.pop();
 			for (int i = 0; i < 4; i++) {
-				int ny = cur.first + dy[i];
-				int nx = cur.second + dx[i];
-				if (nx<1 || nx>n || ny<1 || ny>n)
+				int yy = cur.first + dy[i];
+				int xx = cur.second + dx[i];
+				if (yy < 0 || yy >= n || xx < 0 || xx >= n) 
 					continue;
-				if (visited[ny][nx] != -1)
+				if (visited[yy][xx] != -1)
 					continue;
-				if (arr[ny][nx] > babysize)
+				if (babysize<arr[yy][xx])
 					continue;
-				else if (arr[ny][nx] == babysize || arr[ny][nx] == 0) {
-					visited[ny][nx] = visited[cur.first][cur.second] + 1;
-					q.push({ ny,nx });
+				else if (arr[yy][xx] == babysize || arr[yy][xx] == 0) {
+					visited[yy][xx] = visited[cur.first][cur.second] + 1;
+					q.push({ yy,xx });
 				}
-				else if (arr[ny][nx] < babysize || arr[ny][nx] >= 1) {
-					visited[ny][nx] = visited[cur.first][cur.second] + 1;
-					fish.push_back({ ny,nx });
-					q.push({ ny,nx });
+				else if (arr[yy][xx] < babysize || arr[yy][xx] >= 1) {
+					visited[yy][xx] = visited[cur.first][cur.second] + 1;
+					fish.push_back({ yy,xx });
+					q.push({ yy,xx });
 				}
 			}
 		}
@@ -62,39 +62,31 @@ int main() {
 			return 0;
 		}
 		else if (fish.size() == 1) {
-			y = fish[0].first;
-			x = fish[0].second;
-			arr[y][x] = 0;
+			starty = fish[0].first;
+			startx = fish[0].second;
+			arr[starty][startx] = 0;
 			eat++;
-			result += visited[y][x];
+			result += visited[starty][startx];
 		}
 		else {
-			int mindist = 99999999;
-			for (auto& x : fish) {
+			int mindist = 1e9;
+			for (auto x : fish) {
 				mindist = min(mindist, visited[x.first][x.second]);
 			}
-			int mincnt = 0;
+
 			vector<pair<int, int>> minfish;
-			for (auto& x : fish) {
-				if (mindist == visited[x.first][x.second]) {
-					minfish.push_back({ x.first,x.second });
+			for (auto x : fish) {
+				if (visited[x.first][x.second] == mindist) {
+					minfish.push_back(x);
 				}
 			}
-			if (minfish.size() == 1) {
-				y = minfish[0].first;
-				x = minfish[0].second;
-				arr[y][x] = 0;
-				result += visited[y][x];
-				eat++;
-			}
-			else {
-				sort(minfish.begin(), minfish.end());
-				y = minfish[0].first;
-				x = minfish[0].second;
-				arr[y][x] = 0;
-				result += visited[y][x];
-				eat++;
-			}
+
+			sort(minfish.begin(), minfish.end());  // y 우선, x 차순 정렬됨
+			starty = minfish[0].first;
+			startx = minfish[0].second;
+			arr[starty][startx] = 0;
+			result += visited[starty][startx];
+			eat++;
 		}
 	}
 }
